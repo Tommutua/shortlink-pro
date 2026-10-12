@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <strong>Built by <a href="https://github.com/YOUR_USERNAME">Smart Holla Tech</a></strong>
+  <strong>Built by <a href="https://github.com/Tommutua">Smart Holla Tech</a></strong>
   &nbsp;·&nbsp;
   <a href="#-live-demo">Live Demo</a>
   &nbsp;·&nbsp;
@@ -22,7 +22,7 @@
 
 ## 🎬 Live Demo
 
-👉 **[Try ShortLink Pro →](https://your-app.up.railway.app)**
+👉 **[Try ShortLink Pro →](https://shortlink-pro-production-7a96.up.railway.app)**
 
 No signup. Paste a URL, get a short link, watch the analytics update in real time.
 
@@ -119,7 +119,6 @@ It's not a utility. It's a **platform for link-driven storytelling** — built s
 - Chart.js for visualizations
 
 **Infrastructure**
-- Apache with `.htaccess` for pretty URLs
 - Deployed on Railway
 - Git + GitHub
 
@@ -216,7 +215,7 @@ I initially over-engineered the folder structure (15 folders: `src/Core`, `src/S
 
 ```bash
 # 1. Clone
-git clone https://github.com/YOUR_USERNAME/shortlink-pro.git
+git clone https://github.com/Tommutua/shortlink-pro.git
 cd shortlink-pro
 
 # 2. Install dependencies (for QR codes)
