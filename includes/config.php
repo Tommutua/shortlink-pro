@@ -23,16 +23,14 @@ if (file_exists($envPath)) {
 
     if ($env === false) {
         http_response_code(500);
-        exit('.env file has a syntax error. Check for stray "=" or "#" characters.');
+        exit('.env file has a syntax error.');
     }
 
-    // Merge into $_ENV so other files can read from either source
     foreach ($env as $key => $value) {
         $_ENV[$key] = $value;
     }
 } else {
     // PRODUCTION: use environment variables
-    // (Railway, Heroku, Docker, etc. set these directly.)
     foreach ($_SERVER as $key => $value) {
         if (is_string($value) && preg_match('/^[A-Z][A-Z0-9_]*$/', $key)) {
             $_ENV[$key] = $value;
