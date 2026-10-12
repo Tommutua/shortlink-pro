@@ -38,6 +38,16 @@ try {
     exit;
 }
 
+// Drop existing tables (clean slate)
+echo "Dropping existing tables...\n";
+$pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
+foreach (['ab_variants', 'bio_links', 'bio_pages', 'clicks', 'geo_cache', 'rate_limits', 'links'] as $t) {
+    $pdo->exec("DROP TABLE IF EXISTS $t");
+    echo "  Dropped $t (if existed)\n";
+}
+$pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+echo "\n";
+
 // Load schema
 $schemaPath = __DIR__ . '/migrations/schema.sql';
 if (!file_exists($schemaPath)) {
@@ -45,14 +55,16 @@ if (!file_exists($schemaPath)) {
 }
 
 $sql = file_get_contents($schemaPath);
+
+// Split by semicolons
 $statements = array_filter(
     array_map('trim', preg_split('/;\s*(?:\r?\n|$)/', $sql)),
-    fn($s) => $s !== '' && !str_starts_with($s, '--')
+    fn($s) => $s !== '' && !str_starts_with($s, '--') && !str_starts_with($s, '/*')
 );
 
 $ok = 0; $fail = 0;
 foreach ($statements as $i => $stmt) {
-    $preview = substr(preg_replace('/\s+/', ' ', $stmt), 0, 60);
+    $preview = substr(preg_replace('/\s+/', ' ', $stmt), 0, 70);
     try {
         $pdo->exec($stmt);
         echo "✅ [$i] $preview...\n";
@@ -64,7 +76,7 @@ foreach ($statements as $i => $stmt) {
 }
 
 echo "\nSucceeded: $ok · Failed: $fail\n\n";
-echo "Tables:\n";
+echo "Tables now in database:\n";
 foreach ($pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN) as $t) {
     echo "  • $t\n";
 }
