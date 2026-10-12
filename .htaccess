@@ -1,0 +1,61 @@
+# =====================================================
+# ShortLink Pro — Apache Rewrite Rules
+# =====================================================
+# Built by Smart Holla Tech
+# =====================================================
+# Routes pretty URLs to go.php:
+#   /abc123       → go.php?c=abc123
+#   /stats/abc123 → stats.php?c=abc123
+#   /u/johndoe    → bio.php?u=johndoe
+# =====================================================
+
+# Prevent directory listing
+Options -Indexes
+
+# Enable rewrite engine
+RewriteEngine On
+
+# Set the base path (LOCAL XAMPP uses /shortlink-pro/)
+# When deployed to production at the domain root, change this to RewriteBase /
+RewriteBase /shortlink-pro/
+
+# -----------------------------------------------------
+# Don't rewrite real files or directories
+# -----------------------------------------------------
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# -----------------------------------------------------
+# Special routes (must come BEFORE the catch-all)
+# -----------------------------------------------------
+
+# /stats/{code} → stats.php?c={code}
+RewriteRule ^stats/([a-zA-Z0-9_-]+)/?$ stats.php?c=$1 [L,QSA]
+
+# /u/{username} → bio.php?u={username}
+RewriteRule ^u/([a-zA-Z0-9_-]+)/?$ bio.php?u=$1 [L,QSA]
+
+# -----------------------------------------------------
+# Catch-all — the last rule for short codes
+# Anything not matching the above and not a real file
+# gets treated as a short code.
+# -----------------------------------------------------
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ go.php?c=$1 [L,QSA]
+RewriteRule ^bio/?$ bio.php?u=me [L,QSA]
+
+# -----------------------------------------------------
+# Security headers
+# -----------------------------------------------------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# -----------------------------------------------------
+# Deny access to sensitive files
+# -----------------------------------------------------
+<FilesMatch "^\.env|\.gitignore|composer\.(json|lock)$">
+    Require all denied
+</FilesMatch>
