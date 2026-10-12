@@ -1,12 +1,3 @@
--- =====================================================
--- ShortLink Pro — Database Schema
--- Built by Smart Holla Tech
--- =====================================================
--- Each table is created with its columns, indexes,
--- and foreign keys in a single CREATE statement.
--- No data. No phpMyAdmin export format.
--- =====================================================
-
 CREATE TABLE links (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     short_code VARCHAR(16) UNIQUE NOT NULL,
