@@ -13,25 +13,31 @@
 declare(strict_types=1);
 
 // -----------------------------------------------------
-// 1. LOAD .env FILE
+// 1. LOAD .env FILE (local) OR ENV VARS (production)
 // -----------------------------------------------------
 $envPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env';
 
-if (!file_exists($envPath)) {
-    http_response_code(500);
-    exit('.env file is missing. Copy .env.example to .env and fill in the values.');
-}
+if (file_exists($envPath)) {
+    // LOCAL: parse the .env file
+    $env = parse_ini_file($envPath, false, INI_SCANNER_TYPED);
 
-$env = parse_ini_file($envPath, false, INI_SCANNER_TYPED);
+    if ($env === false) {
+        http_response_code(500);
+        exit('.env file has a syntax error. Check for stray "=" or "#" characters.');
+    }
 
-if ($env === false) {
-    http_response_code(500);
-    exit('.env file has a syntax error. Check for stray "=" or "#" characters.');
-}
-
-// Merge into $_ENV so other files can read from either source
-foreach ($env as $key => $value) {
-    $_ENV[$key] = $value;
+    // Merge into $_ENV so other files can read from either source
+    foreach ($env as $key => $value) {
+        $_ENV[$key] = $value;
+    }
+} else {
+    // PRODUCTION: use environment variables
+    // (Railway, Heroku, Docker, etc. set these directly.)
+    foreach ($_SERVER as $key => $value) {
+        if (is_string($value) && preg_match('/^[A-Z][A-Z0-9_]*$/', $key)) {
+            $_ENV[$key] = $value;
+        }
+    }
 }
 
 // -----------------------------------------------------
